@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cachalote Comilão – Classes de Palavras</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#020d18;--panel:#0a2236;--line:#1d4b66;--text:#eaf6ff;--muted:#9fc0d4;--yellow:#ffd43b;--teal:#3fd0c9;
+        --A:#ff6b6b;--B:#4dabf7;--C:#51cf66;--D:#cc5de8}
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-family:'Fredoka',system-ui,sans-serif;overflow:hidden;-webkit-user-select:none;user-select:none}
+  #app{position:fixed;inset:0;display:flex;gap:14px;padding:12px}
+  #side{flex:0 0 36%;max-width:440px;display:flex;flex-direction:column;gap:10px;min-width:0;overflow:auto}
+  #stage{flex:1;display:flex;align-items:center;justify-content:center;min-width:0;min-height:0;position:relative}
+  @media (max-aspect-ratio: 1/1){ #app{flex-direction:column} #side{flex:0 0 auto;max-width:none} #side .card.rules,#side .fruits{display:none} }
+  .brand{font-family:'Press Start 2P',monospace;font-size:clamp(11px,1.45vw,17px);color:var(--yellow);line-height:1.5}
+  .brand small{display:block;color:var(--teal);font-family:'Fredoka';font-size:14px;margin-top:4px}
+  .card{background:var(--panel);border:2px solid var(--line);border-radius:16px;padding:10px 14px}
+  .card h3{margin:0 0 4px;font-size:15px;color:var(--teal)}
+  .card p,.card li{margin:3px 0;font-size:clamp(13px,1.35vw,15.5px);line-height:1.4}
+  .card ul{margin:0;padding-left:18px}
+  .fruits{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+  .fruits div{background:var(--panel);border:2px solid var(--line);border-radius:12px;padding:4px;text-align:center;font-size:12px;color:var(--muted)}
+  .fruits canvas{display:block;margin:0 auto;width:30px;height:30px;box-shadow:none}
+  .fruits b{color:var(--text)}
+  .row{display:flex;gap:8px;margin-top:auto}
+  .btn{font-family:inherit;font-weight:700;font-size:15px;border:0;border-radius:12px;padding:10px 16px;cursor:pointer;background:var(--yellow);color:#1a1a1a}
+  .btn.ghost{background:transparent;color:var(--text);border:2px solid var(--line)}
+  #cv{display:block;border-radius:12px;box-shadow:0 0 0 3px var(--line),0 10px 40px rgba(0,0,0,.6);touch-action:none}
+  .ov{position:absolute;display:none;align-items:center;justify-content:center;background:rgba(2,10,20,.84);border-radius:12px;z-index:5;padding:14px}
+  .ov.show{display:flex}
+  .box{background:var(--panel);border:3px solid var(--line);border-radius:20px;padding:20px 22px;max-width:520px;width:100%;text-align:center}
+  .box h2{margin:0 0 8px;font-size:clamp(21px,3vw,30px)}
+  .box p{margin:6px 0;color:var(--muted);font-size:clamp(14px,1.7vw,17px);line-height:1.45}
+  .box .big{font-family:'Press Start 2P';color:var(--yellow);font-size:clamp(16px,2.6vw,24px);margin:12px 0;line-height:1.5}
+  .ok h2{color:var(--C)} .bad h2{color:var(--A)}
+  .expl{background:#061726;border-radius:12px;padding:10px 12px;color:var(--text)!important;text-align:left}
+  .bonus{color:var(--yellow)!important;font-weight:600}
+  .stars{font-size:clamp(30px,5vw,46px);letter-spacing:6px;margin:4px 0;color:var(--yellow)}
+  #sentence{font-size:clamp(18px,2.4vw,25px);font-weight:600;line-height:1.35;color:var(--text)!important;margin:12px 0 16px}
+  #sentence mark{background:var(--yellow);color:#1a1a1a;padding:0 6px;border-radius:6px}
+  #opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .opt{display:flex;align-items:center;gap:8px;width:100%;background:#061726;border:2px solid var(--line);border-radius:12px;padding:8px 10px;font:600 clamp(14px,1.7vw,18px) 'Fredoka',sans-serif;color:var(--text);cursor:pointer;text-align:left}
+  .opt:hover,.opt:focus{border-color:var(--yellow);outline:none;transform:scale(1.02)}
+  .opt i{flex:0 0 auto;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-style:normal;color:#fff;font-weight:700}
+  #pad{position:absolute;right:8px;bottom:8px;display:none;grid-template-columns:repeat(3,50px);grid-template-rows:repeat(3,50px);gap:4px;z-index:4;opacity:.85}
+  #pad button{border:0;border-radius:12px;background:rgba(255,255,255,.14);color:#fff;font-size:22px;touch-action:none}
+  #pad button:active{background:rgba(255,212,59,.6)}
+  @media (pointer:coarse){#pad{display:grid}}
+</style>
+</head>
+<body>
+<div id="app">
+  <aside id="side">
+    <div class="brand">CACHALOTE COMILÃO<small>Classes de palavras · 5.º e 6.º anos</small></div>
+    <div class="card rules">
+      <h3>Como se joga</h3>
+      <ul>
+        <li>Nada pelo labirinto e come o plâncton.</li>
+        <li>Apanha uma bolha <b style="color:#ff922b">?</b> para receberes uma pergunta.</li>
+        <li><b>Resposta certa = bónus!</b> Os Picos ficam azuis e assustados: come-os para ganhares 200, 400, 800 e 1600 pontos. Aparece também uma fruta no centro.</li>
+        <li>Se errares, ou se um Pico te apanhar, perdes uma vida.</li>
+        <li>Usa o túnel nas laterais para fugir!</li>
+      </ul>
+    </div>
+    <div class="fruits" id="fruitLegend"></div>
+    <div class="row">
+      <button class="btn ghost" id="bMute" type="button">🔊 Som</button>
+      <button class="btn ghost" id="bRestart" type="button">↺ Recomeçar</button>
+    </div>
+  </aside>
+  <main id="stage">
+    <canvas id="cv" width="672" height="800" aria-label="Labirinto do jogo"></canvas>
+    <div id="pad">
+      <span></span><button data-d="up" type="button">▲</button><span></span>
+      <button data-d="left" type="button">◀</button><span></span><button data-d="right" type="button">▶</button>
+      <span></span><button data-d="down" type="button">▼</button><span></span>
+    </div>
+    <div class="ov show" id="ovStart"><div class="box">
+      <h2>🐋 Cachalote Comilão</h2>
+      <p>20 perguntas sobre <b>nomes, adjetivos, determinantes, pronomes, verbos, advérbios e preposições</b>.</p>
+      <p>Apanha as bolhas <b>?</b> e responde. Cada resposta certa dá-te um bónus: frutas dos Açores e Picos assustados para comer!</p>
+      <p style="margin-top:14px"><button class="btn" id="bStart" type="button">▶ Começar</button></p>
+    </div></div>
+    <div class="ov" id="ovQ"><div class="box">
+      <p id="qPrompt" style="color:var(--yellow);font-weight:600"></p>
+      <p id="sentence">—</p>
+      <div id="opts"></div>
+    </div></div>
+    <div class="ov" id="ovFeed"><div class="box" id="feedBox">
+      <h2 id="fT"></h2><p id="fA"></p><p class="expl" id="fE"></p><p class="bonus" id="fB"></p>
+      <p style="margin-top:12px"><button class="btn" id="bNext" type="button">Continuar ▶</button></p>
+    </div></div>
+    <div class="ov" id="ovEnd"><div class="box">
+      <h2 id="eT"></h2><div class="stars" id="eStars"></div>
+      <div class="big" id="eS"></div><p id="eP"></p>
+      <p style="margin-top:14px"><button class="btn" id="bAgain" type="button">↺ Jogar outra vez</button></p>
+    </div></div>
+  </main>
+</div>
+
+<script>
+(()=>{
+/* ================= PERGUNTAS ================= */
+const Q = [
+ {s:"O [gato] dormia no sofá.", a:"Nome", o:["Nome","Verbo","Adjetivo","Advérbio"], e:"«Gato» designa um ser (animal). É um nome comum."},
+ {s:"A Maria comprou um vestido [azul].", a:"Adjetivo", o:["Nome","Adjetivo","Determinante","Advérbio"], e:"«Azul» atribui uma qualidade ao nome «vestido». É um adjetivo qualificativo."},
+ {s:"[Aquele] livro é muito interessante.", a:"Determinante", o:["Pronome","Determinante","Adjetivo","Nome"], e:"«Aquele» está antes do nome «livro» e acompanha-o. É um determinante demonstrativo."},
+ {s:"[Ela] chegou cedo à escola.", a:"Pronome", o:["Determinante","Pronome","Nome","Advérbio"], e:"«Ela» substitui um nome (uma pessoa). É um pronome pessoal."},
+ {s:"Os alunos [correram] pelo recreio.", a:"Verbo", o:["Nome","Advérbio","Verbo","Adjetivo"], e:"«Correram» indica uma ação e varia em tempo e pessoa. É uma forma do verbo correr."},
+ {s:"O Pedro fala [calmamente].", a:"Advérbio", o:["Adjetivo","Advérbio","Verbo","Preposição"], e:"«Calmamente» indica o modo como o Pedro fala. É um advérbio de modo (termina em -mente)."},
+ {s:"O caderno está [sobre] a mesa.", a:"Preposição", o:["Advérbio","Preposição","Determinante","Pronome"], e:"«Sobre» liga palavras e indica posição. É uma preposição; não varia."},
+ {s:"O [meu] irmão joga futebol.", a:"Determinante", o:["Pronome","Adjetivo","Determinante","Advérbio"], e:"«Meu» está antes do nome «irmão» e acompanha-o. É um determinante possessivo."},
+ {s:"Esta bicicleta é [minha].", a:"Pronome", o:["Determinante","Pronome","Adjetivo","Nome"], e:"Aqui «minha» não acompanha nenhum nome: está no lugar dele. É um pronome possessivo."},
+ {s:"[Amanhã] vamos à praia.", a:"Advérbio", o:["Nome","Verbo","Preposição","Advérbio"], e:"«Amanhã» indica quando acontece a ação. É um advérbio de tempo."},
+ {s:"O [rebanho] pastava no monte.", a:"Nome", o:["Nome","Adjetivo","Verbo","Pronome"], e:"«Rebanho» designa um conjunto de ovelhas. É um nome comum coletivo."},
+ {s:"Lisboa é a capital [de] Portugal.", a:"Preposição", o:["Determinante","Advérbio","Preposição","Pronome"], e:"«De» liga «capital» a «Portugal». É uma preposição simples."},
+ {s:"Os meninos estavam [felizes].", a:"Adjetivo", o:["Advérbio","Adjetivo","Nome","Verbo"], e:"«Felizes» indica como estavam os meninos e concorda com eles em número. É um adjetivo."},
+ {s:"Nós gostamos de [ler].", a:"Verbo", o:["Nome","Verbo","Preposição","Advérbio"], e:"«Ler» é um verbo no infinitivo (a forma que encontras no dicionário)."},
+ {s:"Encontrei [uma] moeda no chão.", a:"Determinante", o:["Pronome","Nome","Adjetivo","Determinante"], e:"«Uma» está antes do nome «moeda». É um determinante artigo indefinido."},
+ {s:"O cão [não] ladrou.", a:"Advérbio", o:["Advérbio","Preposição","Pronome","Determinante"], e:"«Não» nega a ação de ladrar. É um advérbio de negação."},
+ {s:"Vou [com] a minha avó ao mercado.", a:"Preposição", o:["Advérbio","Determinante","Pronome","Preposição"], e:"«Com» liga palavras e indica companhia. É uma preposição."},
+ {s:"O livro [que] li era fantástico.", a:"Pronome", o:["Preposição","Pronome","Determinante","Advérbio"], e:"«Que» substitui «o livro» (li o livro). É um pronome relativo."},
+ {s:"Os [Açores] são um arquipélago.", a:"Nome", o:["Adjetivo","Nome","Determinante","Verbo"], e:"«Açores» é o nome de um lugar concreto e escreve-se com maiúscula. É um nome próprio."},
+ {s:"As baleias [saltam] no mar.", a:"Verbo", o:["Verbo","Nome","Adjetivo","Advérbio"], e:"«Saltam» indica uma ação e varia em tempo e pessoa. É uma forma do verbo saltar."}
+];
+const FRUITS=[{n:"Laranja",p:100},{n:"Banana",p:300},{n:"Maracujá",p:500},{n:"Ananás",p:700},{n:"Melancia",p:1000},{n:"Uvas",p:2000}];
+
+/* ================= LABIRINTO (original) =================
+   # parede  . plâncton  o bolha ? inicial  - porta  H casa  F fruta  P início */
+const MAP = [
+"#####################",
+"#o........#........o#",
+"#.###.###.#.###.###.#",
+"#...................#",
+"#.###.#.#####.#.###.#",
+"#.....#...#...#.....#",
+"#####.###.#.###.#####",
+"#####.#.......#.#####",
+"#####.#.##-##.#.#####",
+"......#.#HHH#.#......",
+"#####.#.#####.#.#####",
+"#####.#...F...#.#####",
+"#####.#.#####.#.#####",
+"#.........#.........#",
+"#.###.###.#.###.###.#",
+"#o..#.....P.....#..o#",
+"###.#.#.#####.#.#.###",
+"#.....#...#...#.....#",
+"#.#######.#.#######.#",
+"#...................#",
+"#####################"];
+const COLS=21, ROWS=MAP.length, T=32, TOP=2*T, TUN=9;
+const LET=["A","B","C","D"], COL={A:"#ff6b6b",B:"#4dabf7",C:"#51cf66",D:"#cc5de8"};
+let PSTART, FRUIT, CORNERS=[]; const DOOR_OUT={x:10,y:7}, HOME={x:10,y:9};
+MAP.forEach((r,y)=>[...r].forEach((c,x)=>{ if(c==="o")CORNERS.push({x,y}); if(c==="P")PSTART={x,y}; if(c==="F")FRUIT={x,y}; }));
+const tile=(x,y)=> (y<0||y>=ROWS)?"#":(x<0||x>=COLS)?(y===TUN?" ":"#"):MAP[y][x];
+const DIRS={up:{x:0,y:-1},down:{x:0,y:1},left:{x:-1,y:0},right:{x:1,y:0}};
+const OPP={up:"down",down:"up",left:"right",right:"left"};
+const wrapX=x=>(x+COLS)%COLS;
+// distâncias até à casa (para os olhos voltarem)
+const DIST=(()=>{const d=MAP.map(r=>[...r].map(()=>Infinity)); const q=[HOME]; d[HOME.y][HOME.x]=0;
+  while(q.length){const c=q.shift(); for(const v of Object.values(DIRS)){const nx=wrapX(c.x+v.x), ny=c.y+v.y; if(tile(nx,ny)!=="#" && d[ny] && d[ny][nx]===Infinity){d[ny][nx]=d[c.y][c.x]+1; q.push({x:nx,y:ny});}}}
+  return d;})();
+
+/* ================= ESTADO ================= */
+const cv=document.getElementById("cv"), ctx=cv.getContext("2d");
+const $=id=>document.getElementById(id);
+let order,qi,score,lives,correct,dots,tokens=[],qmarks=[],pac,ghosts,curQ,state="start",pauseT=0,invT=0,muted=false,last=0,t=0;
+let frightT=0, eatChain=0, fruit=null, eaten=[], floats=[], best=0, pendingBonus=false, msg="";
+try{best=+localStorage.getItem("cachalote_best")||0;}catch(e){}
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];}return a;};
+const PAC_SPD=3.8, gSpd=()=>1.9+Math.min(qi,19)/19*0.9;
+
+function resetDots(){ dots=new Set(); MAP.forEach((r,y)=>[...r].forEach((c,x)=>{ if(c===".") dots.add(x+","+y); })); }
+function ent(p,spd){return {x:p.x,y:p.y,tx:p.x,ty:p.y,p:0,dir:null,next:null,spd};}
+const PIC=[{c:"#ff4d4d",name:"Vermelho"},{c:"#5ce65c"},{c:"#b06cff"},{c:"#ffa94d"}];
+function resetActors(){
+  pac=ent(PSTART,PAC_SPD); pac.face="left"; pac.pass=(x,y)=>{const c=tile(x,y);return c!=="#"&&c!=="-"&&c!=="H";};
+  ghosts=PIC.map((p,i)=>{
+    const start = i===0? DOOR_OUT : {x:8+i, y:HOME.y};
+    const g=ent(start,gSpd()); g.c=p.c; g.i=i;
+    g.mode = i===0? "chase":"house"; g.houseT = i*2.5;
+    g.pass=(x,y)=>{const c=tile(x,y); if(c==="#")return false; if(c==="-"||c==="H")return g.mode==="leaving"||g.mode==="eyes"; return true;};
+    return g;});
+  frightT=0; invT=1.5; pauseT=1.4; msg="PREPARA-TE!";
+}
+function openTiles(){ const r=[]; MAP.forEach((row,y)=>[...row].forEach((c,x)=>{ if(c==="."||c==="o") r.push({x,y}); })); return r; }
+function spawnQ(){
+  if(Q.length-qi-qmarks.length<=0) return;
+  let cand=openTiles().filter(o=>!qmarks.some(m=>m.x===o.x&&m.y===o.y) && Math.abs(o.x-pac.x)+Math.abs(o.y-pac.y)>=8 && o.y!==TUN);
+  if(!cand.length) cand=openTiles();
+  const k=cand[Math.random()*cand.length|0]; qmarks.push({x:k.x,y:k.y});
+}
+function newGame(){
+  order=shuffle(Q.map((_,i)=>i)); qi=0; score=0; lives=3; correct=0; eaten=[]; floats=[]; fruit=null;
+  resetDots(); resetActors(); qmarks=CORNERS.map(c=>({x:c.x,y:c.y}));
+}
+function addScore(n){ score+=n; if(score>best){best=score; try{localStorage.setItem("cachalote_best",best);}catch(e){}} }
+
+/* ================= SOM ================= */
+let ac;
+function beep(f,d=.08,type="square",v=.05,slide=0){
+  if(muted) return;
+  try{ ac=ac||new (window.AudioContext||window.webkitAudioContext)(); const o=ac.createOscillator(), g=ac.createGain();
+    o.type=type; o.frequency.value=f; if(slide)o.frequency.linearRampToValueAtTime(Math.max(40,f+slide),ac.currentTime+d);
+    g.gain.value=v; g.gain.exponentialRampToValueAtTime(.0001,ac.currentTime+d); o.connect(g).connect(ac.destination); o.start(); o.stop(ac.currentTime+d);}catch(e){}
+}
+const sGood=()=>[523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,.12,"square",.06),i*90));
+const sBad=()=>beep(300,.35,"sawtooth",.06,-180);
+const sDie=()=>beep(700,.7,"triangle",.08,-600);
+const sEatG=()=>beep(200,.25,"square",.06,900);
+const sFruit=()=>[880,1175,1568].forEach((f,i)=>setTimeout(()=>beep(f,.09,"triangle",.07),i*70));
+
+/* ================= MOVIMENTO ================= */
+const canGo=(e,d)=>e.pass(e.tx+DIRS[d].x, e.ty+DIRS[d].y);
+function step(e,dt,chooser,arrive){
+  if(e.dir && e.next===OPP[e.dir] && e.p>0){
+    [e.x,e.tx]=[e.tx,e.x]; [e.y,e.ty]=[e.ty,e.y]; e.p=1-e.p; e.dir=e.next; e.face=e.dir; return;
+  }
+  let move=e.spd*dt;
+  while(move>0){
+    if(e.p===0){
+      const d=chooser(e);
+      if(!d||!canGo(e,d)){ e.dir=null; return; }
+      e.dir=d; e.tx=e.x+DIRS[d].x; e.ty=e.y+DIRS[d].y;
+    }
+    const r=Math.min(move,1-e.p); e.p+=r; move-=r;
+    if(e.p>=1-1e-9){ e.p=0; e.tx=wrapX(e.tx); e.x=e.tx; e.y=e.ty; if(arrive){ arrive(e); if(state!=="play") return; } }
+  }
+}
+function pacChoose(e){
+  if(e.next && canGo(e,e.next)) e.dir=e.next;
+  if(e.dir){ e.face=e.dir; return canGo(e,e.dir)?e.dir:null; }
+  return null;
+}
+function reverse(g){ if(!g.dir) return; if(g.p>0){ [g.x,g.tx]=[g.tx,g.x]; [g.y,g.ty]=[g.ty,g.y]; g.p=1-g.p; } g.dir=OPP[g.dir]; }
+function ghostChoose(g){
+  const all=Object.keys(DIRS).filter(d=>canGo(g,d));
+  if(g.mode==="leaving"){ if(g.x!==HOME.x) return g.x<HOME.x?"right":"left"; return "up"; }
+  if(g.mode==="eyes"){ all.sort((a,b)=>(DIST[g.y+DIRS[a].y]?.[wrapX(g.x+DIRS[a].x)]??1e9)-(DIST[g.y+DIRS[b].y]?.[wrapX(g.x+DIRS[b].x)]??1e9)); return all[0]; }
+  let opts=all.filter(d=>d!==OPP[g.dir]); if(!opts.length) opts=all;
+  const dist=d=>Math.hypot(g.x+DIRS[d].x-pac.x, g.y+DIRS[d].y-pac.y);
+  if(g.mode==="fright"){ if(Math.random()<0.6) opts.sort((a,b)=>dist(b)-dist(a)); else return opts[Math.random()*opts.length|0]; return opts[0]; }
+  const smart=[0.7,0.55,0.45,0.35][g.i];
+  if(Math.random()<smart){ opts.sort((a,b)=>dist(a)-dist(b)); return opts[0]; }
+  return opts[Math.random()*opts.length|0];
+}
+function ghostArrive(g){
+  if(g.mode==="leaving" && g.x===DOOR_OUT.x && g.y===DOOR_OUT.y){ g.mode="chase"; g.dir=null; }
+  else if(g.mode==="eyes" && g.x===HOME.x && g.y===HOME.y){ g.mode="house"; g.houseT=1.2; g.dir=null; }
+}
+const pos=e=>({x:e.x+(e.tx-e.x)*e.p, y:e.y+(e.ty-e.y)*e.p});
+
+function onTile(){
+  const k=pac.x+","+pac.y;
+  if(dots.has(k)){ dots.delete(k); addScore(10); beep(((score/10)%2)?660:880,.04,"square",.022); if(!dots.size) resetDots(); }
+  if(fruit && pac.x===FRUIT.x && pac.y===FRUIT.y){ const f=FRUITS[fruit.k]; addScore(f.p); eaten.push(fruit.k); if(eaten.length>7)eaten.shift(); floats.push({x:FRUIT.x,y:FRUIT.y,txt:f.p,t:1.5,c:"#ffd43b"}); fruit=null; sFruit(); }
+  const qm=qmarks.findIndex(o=>o.x===pac.x&&o.y===pac.y);
+  if(qm>=0){ qmarks.splice(qm,1); ask(); }
+}
+
+/* ================= PERGUNTAS ================= */
+function ask(){
+  curQ=Q[order[qi]]; state="ask";
+  tokens=shuffle(curQ.o).map((txt,i)=>({L:LET[i],txt,ok:txt===curQ.a}));
+  $("qPrompt").textContent=`Pergunta ${qi+1} de ${Q.length} · A que classe pertence a palavra destacada?`;
+  $("sentence").innerHTML=curQ.s.replace(/\[(.+?)\]/,"<mark>$1</mark>");
+  $("opts").innerHTML=tokens.map((k,i)=>`<button type="button" class="opt" data-i="${i}"><i style="background:${COL[k.L]}">${k.L}</i>${k.txt}</button>`).join("");
+  $("opts").querySelectorAll("button").forEach(b=>b.onclick=()=>answer(tokens[+b.dataset.i]));
+  beep(660,.12,"triangle",.06,220);
+  $("ovQ").classList.add("show");
+}
+function answer(tk){
+  if(state!=="ask") return;
+  const q=curQ; state="feed"; $("ovQ").classList.remove("show");
+  const box=$("feedBox");
+  if(tk.ok){ correct++; addScore(100); sGood(); box.className="box ok"; $("fT").textContent="✔ Muito bem!";
+    $("fA").innerHTML=`<b>${q.a}</b> é a resposta certa. +100 pontos`;
+    const f=FRUITS[Math.min(correct-1,FRUITS.length-1)];
+    $("fB").innerHTML=`⚡ BÓNUS! Os Picos ficaram assustados: come-os!<br>🍽️ Apareceu uma fruta no centro: ${f.n} (${f.p} pontos).`; pendingBonus=true; }
+  else { lives--; sBad(); box.className="box bad"; $("fT").textContent="✘ Ainda não…";
+    $("fA").innerHTML=`Escolheste <b>${tk.txt}</b>. A resposta certa é <b>${q.a}</b>.`; $("fB").textContent=""; pendingBonus=false; }
+  $("fE").textContent=q.e; qi++;
+  $("bNext").textContent=(lives<=0||qi>=Q.length)?"Ver resultado ▶":"Continuar a jogar ▶";
+  $("ovFeed").classList.add("show"); $("bNext").focus();
+}
+function startBonus(){
+  frightT=8; eatChain=0;
+  ghosts.forEach(g=>{ if(g.mode==="chase"){ g.mode="fright"; reverse(g); } });
+  fruit={k:Math.min(correct-1,FRUITS.length-1), t:10};
+}
+function next(){
+  $("ovFeed").classList.remove("show");
+  if(lives<=0||qi>=Q.length) return end();
+  spawnQ(); state="play"; invT=Math.max(invT,.8);
+  if(pendingBonus){ startBonus(); pendingBonus=false; }
+}
+function end(){
+  state="end"; const win=lives>0;
+  $("eT").textContent=win?"🏆 Chegaste ao fim!":"🐡 Fim das vidas!";
+  const st=correct>=18?3:correct>=13?2:correct>=8?1:0;
+  $("eStars").textContent="★".repeat(st)+"☆".repeat(3-st);
+  $("eS").textContent=score+" pts";
+  $("eP").innerHTML=`Acertaste <b>${correct}</b> de ${qi} perguntas respondidas.<br>${st===3?"És um mestre das classes de palavras!":st===2?"Muito bom trabalho! Mais um pouco e chegas às 3 estrelas.":st===1?"Bom começo! Joga outra vez para melhorar.":"Revê as classes de palavras e tenta de novo!"}${score>=best&&score>0?"<br>🏅 Novo recorde!":""}`;
+  $("ovEnd").classList.add("show");
+}
+
+/* ================= CICLO ================= */
+function update(dt){
+  t+=dt;
+  floats.forEach(f=>{f.t-=dt;f.y-=dt*.6;}); floats=floats.filter(f=>f.t>0);
+  if(state!=="play") return;
+  if(pauseT>0){ pauseT-=dt; if(pauseT<=0) msg=""; return; }
+  if(invT>0) invT-=dt;
+  if(fruit){ fruit.t-=dt; if(fruit.t<=0) fruit=null; }
+  if(frightT>0){ frightT-=dt; if(frightT<=0) ghosts.forEach(g=>{ if(g.mode==="fright") g.mode="chase"; }); }
+  step(pac,dt,pacChoose,onTile);
+  if(state!=="play") return;
+  for(const g of ghosts){
+    if(g.mode==="house"){ g.houseT-=dt; if(g.houseT<=0) g.mode="leaving"; continue; }
+    g.spd = g.mode==="eyes"?7 : g.mode==="fright"?gSpd()*.55 : g.mode==="leaving"?1.8 : (g.y===TUN&&(g.x<5||g.x>15))?gSpd()*.6 : gSpd();
+    step(g,dt,ghostChoose,ghostArrive);
+  }
+  const P=pos(pac);
+  for(const g of ghosts){
+    if(g.mode!=="chase"&&g.mode!=="fright") continue;
+    const G=pos(g); if(Math.hypot(P.x-G.x,P.y-G.y)>0.6) continue;
+    if(g.mode==="fright"){ const pts=200*2**Math.min(eatChain,3); eatChain++; addScore(pts); floats.push({x:G.x,y:G.y,txt:pts,t:1.3,c:"#7ef9ff"}); g.mode="eyes"; sEatG(); pauseT=.35; }
+    else if(invT<=0){ caught(); return; }
+  }
+}
+function caught(){
+  lives--; sDie();
+  if(lives<=0){ state="feed"; setTimeout(end,800); return; }
+  fruit=null; resetActors(); msg="APANHADO!";
+}
+
+/* ================= DESENHO ================= */
+function drawWhale(c,cx,cy,r,face,m){
+  c.save(); c.translate(cx,cy);
+  if(face==="left") c.scale(-1,1); else if(face==="up") c.rotate(-Math.PI/2); else if(face==="down") c.rotate(Math.PI/2);
+  c.fillStyle="#7fa3cf";
+  c.beginPath(); c.moveTo(-r*.7,0); c.lineTo(-r*1.08,-r*.5); c.quadraticCurveTo(-r*.95,0,-r*1.08,r*.5); c.closePath(); c.fill(); // cauda
+  c.beginPath(); c.ellipse(-r*.2,r*.05,r*.7,r*.48,0,0,7); c.fill();                           // corpo
+  c.beginPath(); c.roundRect(-r*.15,-r*.62,r*1.12,r*1.12,r*.38); c.fill();                       // cabeça
+  c.fillStyle="#c9dcf2"; c.beginPath(); c.ellipse(r*.2,r*.38,r*.62,r*.14,0,0,7); c.fill();        // barriga
+  c.fillStyle="#04192b"; c.beginPath(); c.moveTo(r*.05,r*.2); c.lineTo(r*.99,r*.2-r*.42*m); c.lineTo(r*.99,r*.2+r*.32*m); c.closePath(); c.fill(); // boca
+  c.fillStyle="#fff"; c.beginPath(); c.arc(r*.5,-r*.2,r*.17,0,7); c.fill();
+  c.fillStyle="#0b1f33"; c.beginPath(); c.arc(r*.55,-r*.2,r*.09,0,7); c.fill();
+  c.restore();
+}
+function drawPico(c,cx,cy,g){
+  const r=11, fr=g.mode==="fright", eyes=g.mode==="eyes";
+  if(!eyes){
+    const flash=fr&&frightT<2&&Math.floor(t*8)%2;
+    const col=fr?(flash?"#e8f0ff":"#2747d8"):g.c;
+    c.fillStyle=col;
+    c.beginPath(); for(let i=0;i<14;i++){ const a=i/14*Math.PI*2+t*(fr?0:1.2)*.3, a2=a+Math.PI/14; c.lineTo(cx+Math.cos(a)*r*1.42,cy+Math.sin(a)*r*1.42); c.lineTo(cx+Math.cos(a2)*r*.95,cy+Math.sin(a2)*r*.95);} c.closePath(); c.fill();
+    c.beginPath(); c.arc(cx,cy,r,0,7); c.fill();
+    if(fr){ c.strokeStyle=flash?"#d33":"#fff"; c.lineWidth=1.6; c.beginPath(); for(let i=0;i<5;i++) c.lineTo(cx-6+i*3,cy+5+(i%2?-2:1)); c.stroke();
+      c.fillStyle=flash?"#d33":"#fff"; c.fillRect(cx-5,cy-4,3,3); c.fillRect(cx+2,cy-4,3,3); return; }
+  }
+  const d=DIRS[g.dir||"down"];
+  for(const s of[-4.5,4.5]){ c.fillStyle="#fff"; c.beginPath(); c.arc(cx+s,cy-3,3.8,0,7); c.fill();
+    c.fillStyle="#0a1a3a"; c.beginPath(); c.arc(cx+s+d.x*1.6,cy-3+d.y*1.6,1.9,0,7); c.fill(); }
+  if(!eyes){ c.strokeStyle="#1a0a0a"; c.lineWidth=2; c.beginPath(); c.moveTo(cx-8,cy-9); c.lineTo(cx-2,cy-6.5); c.moveTo(cx+8,cy-9); c.lineTo(cx+2,cy-6.5); c.stroke();
+    c.fillStyle="#1a0a0a"; c.beginPath(); c.ellipse(cx,cy+5,3,1.8,0,0,7); c.fill(); }
+}
+function drawFruit(c,k,cx,cy,s=1){
+  c.save(); c.translate(cx,cy); c.scale(s,s);
+  if(k===0){ c.fillStyle="#ff8c1a"; c.beginPath(); c.arc(0,2,9,0,7); c.fill(); c.fillStyle="#3fae49"; c.beginPath(); c.ellipse(4,-8,5,2.5,-.5,0,7); c.fill(); c.fillStyle="#ffc078"; c.beginPath(); c.arc(-3,-1,2,0,7); c.fill(); }
+  if(k===1){ c.strokeStyle="#ffe14d"; c.lineWidth=6; c.lineCap="round"; c.beginPath(); c.arc(-4,-4,11,.2,1.6); c.stroke(); c.strokeStyle="#6b4f1d"; c.lineWidth=3; c.beginPath(); c.moveTo(6.5,-1.5); c.lineTo(8.5,-3); c.stroke(); }
+  if(k===2){ c.fillStyle="#6a2c70"; c.beginPath(); c.arc(0,2,9,0,7); c.fill(); c.fillStyle="#b07cc6"; for(const [a,b] of [[-3,-1],[3,3],[-1,6],[4,-3],[-5,4]]){ c.beginPath(); c.arc(a,b,1,0,7); c.fill(); } c.strokeStyle="#3fae49"; c.lineWidth=2; c.beginPath(); c.moveTo(0,-7); c.lineTo(2,-11); c.stroke(); }
+  if(k===3){ c.fillStyle="#3fae49"; for(const a of[-.5,0,.5]){ c.beginPath(); c.moveTo(0,-5); c.lineTo(Math.sin(a)*9-2,-14); c.lineTo(Math.sin(a)*9+2,-14); c.closePath(); c.fill(); }
+    c.fillStyle="#f2b33d"; c.beginPath(); c.ellipse(0,3,7,9,0,0,7); c.fill(); c.save(); c.clip(); c.strokeStyle="#a86b12"; c.lineWidth=1; c.beginPath(); for(let i=-2;i<=2;i++){ c.moveTo(-7,3+i*4-6); c.lineTo(7,3+i*4+6); c.moveTo(7,3+i*4-6); c.lineTo(-7,3+i*4+6);} c.stroke(); c.restore(); }
+  if(k===4){ c.fillStyle="#2f9e44"; c.beginPath(); c.arc(0,-2,11,0,Math.PI); c.fill(); c.fillStyle="#ff4d5e"; c.beginPath(); c.arc(0,-2,8.5,0,Math.PI); c.fill(); c.fillStyle="#111"; for(const a of[-4,0,4]){ c.beginPath(); c.ellipse(a,2+(a?0:2),1,1.6,0,0,7); c.fill(); } }
+  if(k===5){ c.fillStyle="#7b3fa0"; for(const [a,b] of [[-4,-3],[0,-3],[4,-3],[-2,1],[2,1],[0,5]]){ c.beginPath(); c.arc(a,b,3.4,0,7); c.fill(); } c.strokeStyle="#6b4f1d"; c.lineWidth=2; c.beginPath(); c.moveTo(0,-6); c.lineTo(1,-11); c.stroke(); c.fillStyle="#3fae49"; c.beginPath(); c.ellipse(4,-9,3.5,2,.3,0,7); c.fill(); }
+  c.restore();
+}
+function draw(){
+  ctx.fillStyle="#020d18"; ctx.fillRect(0,0,cv.width,cv.height);
+  // HUD superior
+  ctx.textBaseline="top"; ctx.font="14px 'Press Start 2P', monospace";
+  ctx.fillStyle="#fff"; ctx.textAlign="left"; ctx.fillText("PONTOS",T*1,10); ctx.textAlign="center"; ctx.fillText("RECORDE",cv.width/2,10); ctx.textAlign="right"; ctx.fillText("PERGUNTAS",cv.width-T,10);
+  ctx.fillStyle="#ffd43b"; ctx.textAlign="left"; ctx.fillText(String(score),T*1,34); ctx.textAlign="center"; ctx.fillText(String(best),cv.width/2,34); ctx.textAlign="right"; ctx.fillText(qi+"/"+Q.length,cv.width-T,34);
+  ctx.save(); ctx.translate(0,TOP);
+  // paredes
+  for(let y=0;y<ROWS;y++)for(let x=0;x<COLS;x++) if(MAP[y][x]==="#"){ ctx.fillStyle="#0c3a56"; ctx.fillRect(x*T,y*T,T,T); }
+  ctx.strokeStyle="#3fd0c9"; ctx.lineWidth=2.5; ctx.lineCap="round";
+  const W=(x,y)=>tile(x,y)==="#";
+  for(let y=0;y<ROWS;y++)for(let x=0;x<COLS;x++) if(MAP[y][x]==="#"){
+    const X=x*T,Y=y*T,i=4; ctx.beginPath();
+    if(!W(x,y-1)){ctx.moveTo(X+(W(x-1,y)?0:i),Y+i);ctx.lineTo(X+T-(W(x+1,y)?0:i),Y+i);}
+    if(!W(x,y+1)){ctx.moveTo(X+(W(x-1,y)?0:i),Y+T-i);ctx.lineTo(X+T-(W(x+1,y)?0:i),Y+T-i);}
+    if(!W(x-1,y)){ctx.moveTo(X+i,Y+(W(x,y-1)?0:i));ctx.lineTo(X+i,Y+T-(W(x,y+1)?0:i));}
+    if(!W(x+1,y)){ctx.moveTo(X+T-i,Y+(W(x,y-1)?0:i));ctx.lineTo(X+T-i,Y+T-(W(x,y+1)?0:i));}
+    ctx.stroke();
+  }
+  // porta da casa
+  ctx.fillStyle="#ffb3c7"; ctx.fillRect(10*T,8*T+T/2-2,T,4);
+  // plâncton
+  ctx.fillStyle="#bdf4ff"; dots.forEach(k=>{const [x,y]=k.split(",").map(Number); ctx.beginPath(); ctx.arc(x*T+T/2,y*T+T/2,2.8,0,7); ctx.fill();});
+  // bolhas ?
+  for(const k of qmarks){ const cx=k.x*T+T/2, cy=k.y*T+T/2, r=12+Math.sin(t*5)*1.5;
+    ctx.shadowColor="#ffd43b"; ctx.shadowBlur=16; ctx.fillStyle="#ff922b"; ctx.beginPath(); ctx.arc(cx,cy,r,0,7); ctx.fill(); ctx.shadowBlur=0;
+    ctx.fillStyle="rgba(255,255,255,.5)"; ctx.beginPath(); ctx.arc(cx-4,cy-5,3,0,7); ctx.fill();
+    ctx.fillStyle="#fff"; ctx.font="bold 18px Fredoka, sans-serif"; ctx.textAlign="center"; ctx.textBaseline="middle"; ctx.fillText("?",cx,cy+1); }
+  // fruta
+  if(fruit && !(fruit.t<2.5 && Math.floor(t*6)%2)) drawFruit(ctx,fruit.k,FRUIT.x*T+T/2,FRUIT.y*T+T/2+Math.sin(t*4)*1.5);
+  // Picos
+  for(const g of ghosts){ const P=pos(g); const bob=g.mode==="house"?Math.sin(t*5+g.i)*3:0; drawPico(ctx,P.x*T+T/2,P.y*T+T/2+bob,g); }
+  // cachalote
+  const P=pos(pac);
+  if(!(invT>0 && pauseT<=0 && Math.floor(t*10)%2)){ const m=pac.dir?Math.abs(Math.sin(t*12)):.35; drawWhale(ctx,P.x*T+T/2,P.y*T+T/2,14,pac.face,m); }
+  // pontos a flutuar
+  ctx.font="11px 'Press Start 2P', monospace"; ctx.textAlign="center"; ctx.textBaseline="middle";
+  floats.forEach(f=>{ ctx.globalAlpha=Math.min(1,f.t*2); ctx.fillStyle=f.c; ctx.fillText(f.txt,f.x*T+T/2,f.y*T+T/2); }); ctx.globalAlpha=1;
+  if(msg && state==="play"){ ctx.font="16px 'Press Start 2P', monospace"; ctx.fillStyle="#ffd43b"; ctx.fillText(msg,10*T+T/2,11*T+T/2); }
+  ctx.restore();
+  // HUD inferior: vidas e frutas
+  const by=TOP+ROWS*T+T;
+  for(let i=0;i<Math.max(0,lives-0);i++) drawWhale(ctx,T*1.2+i*T*1.3,by,11,"right",.3);
+  eaten.forEach((k,i)=>drawFruit(ctx,k,cv.width-T*1.1-i*T*1.15,by,.85));
+  if(frightT>0){ ctx.font="10px 'Press Start 2P', monospace"; ctx.fillStyle="#7ef9ff"; ctx.textAlign="center"; ctx.fillText("BÓNUS "+Math.ceil(frightT)+"s",cv.width/2,by); }
+}
+function loop(ts){ const dt=Math.min(.05,(ts-last)/1000||0); last=ts; update(dt); draw(); requestAnimationFrame(loop); }
+
+/* ================= TAMANHO ================= */
+function fit(){
+  const st=$("stage"), Wd=st.clientWidth, Ht=st.clientHeight, r=cv.width/cv.height;
+  let w=Wd, h=Wd/r; if(h>Ht){h=Ht;w=Ht*r;}
+  cv.style.width=Math.floor(w)+"px"; cv.style.height=Math.floor(h)+"px";
+  document.querySelectorAll(".ov").forEach(o=>{o.style.width=Math.floor(w)+"px";o.style.height=Math.floor(h)+"px";});
+}
+window.addEventListener("resize",fit);
+
+/* ================= CONTROLOS ================= */
+const KEYS={ArrowUp:"up",ArrowDown:"down",ArrowLeft:"left",ArrowRight:"right",w:"up",s:"down",a:"left",d:"right",W:"up",S:"down",A:"left",D:"right"};
+window.addEventListener("keydown",e=>{
+  if(state==="ask"){ let i="1234".indexOf(e.key); if(i<0&&e.key.length===1) i="abcd".indexOf(e.key.toLowerCase()); if(i>=0){ e.preventDefault(); answer(tokens[i]); } return; }
+  if(KEYS[e.key]){ e.preventDefault(); if(state==="play") pac.next=KEYS[e.key]; }
+  else if(e.key==="Enter"||e.key===" "){
+    if(state==="feed"&&$("ovFeed").classList.contains("show")){ e.preventDefault(); next(); }
+    else if(state==="start"){ e.preventDefault(); start(); }
+  }
+});
+document.querySelectorAll("#pad button").forEach(b=>b.addEventListener("pointerdown",e=>{e.preventDefault(); if(state==="play") pac.next=b.dataset.d;}));
+let sw=null;
+cv.addEventListener("pointerdown",e=>{sw={x:e.clientX,y:e.clientY};});
+cv.addEventListener("pointerup",e=>{ if(!sw||state!=="play")return; const dx=e.clientX-sw.x, dy=e.clientY-sw.y; if(Math.max(Math.abs(dx),Math.abs(dy))>20) pac.next=Math.abs(dx)>Math.abs(dy)?(dx>0?"right":"left"):(dy>0?"down":"up"); sw=null; });
+
+function start(){ ["ovStart","ovEnd","ovFeed","ovQ"].forEach(id=>$(id).classList.remove("show")); newGame(); state="play"; beep(440,.1); window.focus(); }
+$("bStart").onclick=start; $("bAgain").onclick=start; $("bNext").onclick=next; $("bRestart").onclick=start;
+$("bMute").onclick=()=>{ muted=!muted; $("bMute").textContent=muted?"🔇 Som":"🔊 Som"; };
+
+// legenda das frutas
+$("fruitLegend").innerHTML=FRUITS.map((f,i)=>`<div><canvas width="30" height="30" data-k="${i}"></canvas><b>${f.n}</b><br>${f.p}</div>`).join("");
+document.querySelectorAll("#fruitLegend canvas").forEach(c=>drawFruit(c.getContext("2d"),+c.dataset.k,15,16,.95));
+
+newGame(); state="start"; fit(); requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
